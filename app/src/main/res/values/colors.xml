@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="characterNameColor">#342d7e</color>
+    <color name="passwordColor">#1743c7</color>
+    <color name="fullNameColor">#e3319d</color>
+</resources>
