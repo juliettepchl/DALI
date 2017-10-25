@@ -18,20 +18,20 @@ public class PlayFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+//        // Inflate the layout for this fragment
+//
+//        playButton = container.findViewById(R.id.playButton);
+//
+//        playButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (playButton.getText().toString().equals("I ALREADY HAVE AN ACCOUNT")){
+//                    Intent myIntent = new Intent(getActivity(), MapActivity.class);
+//                    startActivity(myIntent);
+//                }
+//
+//            }
+//        });
         return inflater.inflate(R.layout.playfragment, container, false);
-
-        playButton = container.findViewById(R.id.playButton);
-
-        playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (playButton.getText().toString().equals("I ALREADY HAVE AN ACCOUNT")){
-                    Intent myIntent = new Intent(getActivity(), MapActivity.class);
-                    startActivity(myIntent);
-                }
-
-            }
-        });
     }
 }
