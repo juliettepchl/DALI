@@ -42,5 +42,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="profile">Profile</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="play">Play</string>
+    <string name="score">Score</string>
 
 </resources>
