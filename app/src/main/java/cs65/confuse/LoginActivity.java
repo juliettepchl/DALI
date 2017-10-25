@@ -40,7 +40,7 @@ import java.net.MalformedURLException;
  * GitHub Repository Here: "https://github.com/mishravarun/CS65-Samples/tree/master/Camera"
  */
 
-public class LoginActivity extends AppCompatActivity implements ListenerInterface {
+public  class LoginActivity extends AppCompatActivity implements ListenerInterface {
 
 
     private final int REQUEST_IMAGE_CAPTURE = 0;
@@ -366,6 +366,7 @@ public class LoginActivity extends AppCompatActivity implements ListenerInterfac
         account.fullName = ads.getFullName();
         account.name = ads.getCharacterName();
         account.prof = bitmap;
+        account.score = 0;
         return account;
     }
 }

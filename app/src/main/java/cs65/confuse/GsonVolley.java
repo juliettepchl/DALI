@@ -242,4 +242,5 @@ public class GsonVolley extends AppCompatActivity {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
+
 }

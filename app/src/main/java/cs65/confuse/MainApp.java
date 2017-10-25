@@ -1,6 +1,7 @@
 package cs65.confuse;
 
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
@@ -24,7 +25,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainApp extends AppCompatActivity {
+public  class MainApp extends AppCompatActivity  {
     //Changes
     private SlidingTabLayout slidingTabLayout;
     private ViewPager mViewPager;

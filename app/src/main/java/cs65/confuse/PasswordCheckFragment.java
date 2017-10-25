@@ -77,4 +77,5 @@ public class PasswordCheckFragment extends android.app.DialogFragment{
         }
     }
 
+
 }

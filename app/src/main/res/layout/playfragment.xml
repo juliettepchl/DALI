@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/poney"
+    android:background="@drawable/cat"
     android:gravity="end|center_horizontal"
     android:orientation="vertical">
 
@@ -11,10 +11,15 @@
     <Button
         android:id="@+id/playButton"
         style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_horizontal"
+        android:fontFamily="casual"
         android:text="@string/play"
-        android:textColor="@color/fullNameColor" />
+        android:textColor="@color/fullNameColor"
+        android:textSize="50sp"
+        android:textStyle="bold" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -26,16 +31,20 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="43dp"
+            android:clickable="false"
+            android:ems="10"
             android:focusable="false"
             android:focusableInTouchMode="false"
-            android:clickable="false"
-            android:layout_marginBottom="96dp"
-            android:ems="10"
+            android:fontFamily="casual"
             android:inputType="textPersonName"
             android:text="@string/score"
+            android:textAllCaps="false"
             android:textColor="@color/passwordColor"
+            android:textSize="24sp"
             android:visibility="visible"
             tools:ignore="LabelFor" />
+
     </RelativeLayout>
 
 </LinearLayout>
