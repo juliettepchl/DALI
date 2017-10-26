@@ -1,4 +1,5 @@
 package cs65.confuse;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -17,6 +18,13 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.GeoDataClient;
@@ -34,8 +42,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An activity that displays a map showing the place at the device's current location.
@@ -75,7 +88,9 @@ public class MapActivity extends AppCompatActivity
     private String[] mLikelyPlaceAddresses;
     private String[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
-    private GsonVolley gv;
+    //account var
+    private Account account;
+
 
 
     private Cat[] catList;
@@ -88,17 +103,11 @@ public class MapActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         //Get the cat locations
-        gv = new GsonVolley();
         SaveData sd = new SaveData(this);
         sd.initialize();
-        Account account = sd.load();
+        account = sd.load();
 
-        try {
-            gv.doGet(MapActivity.this, account.name, account.password);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Fuck, something went wrong", Toast.LENGTH_LONG).show();
-        }
+
 
 
 
@@ -141,6 +150,15 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
+//    //load data from savedInstanceState bundle
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//
+//        Log.d("STATE", "onRestoreState");
+//
+//    }
+
 
 
     /**
@@ -171,53 +189,110 @@ public class MapActivity extends AppCompatActivity
      * Manipulates the map when it's available.
      * This callback is triggered when the map is ready to be used.
      */
+
+    public void doGet(final Activity activity, String name, String password) throws MalformedURLException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
+        URL url = new URL("http://cs65.cs.dartmouth.edu/catlist.pl?name="+name+"&password="+password+"&mode=easy");
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // parse the string, based on provided class object as template
+                            Gson gson = new GsonBuilder().create();
+                            catList = gson.fromJson(response, Cat[].class);
+                            if (catList != null) {
+                                for (int i = 0; i < catList.length; i++) {
+                                    Cat cat = catList[i];
+                                    LatLng pos = new LatLng(cat.lat, cat.lng);
+                                    Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title(cat.name));
+                                    marker.setVisible(true);
+                                    marker.setTag(cat.catId);
+
+
+
+                                }
+                            }
+
+                        }
+
+                        catch( Exception e){
+                            Log.d("JSON", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+            // This to set custom headers:
+            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json"); // or else HTTP code 500
+                return params;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+
+
+
+
     @Override
     public void onMapReady(GoogleMap map) {
         mMap = map;
 
-        catList = gv.getCatList();
-        for(int i = 0; i < catList.length; i++){
-            Cat cat = catList[i];
-            LatLng pos = new LatLng(cat.lat, cat.lng);
-            Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title(cat.name));
-            marker.setVisible(true);
-            marker.setTag(cat.catId);
+        try {
+            doGet(MapActivity.this, account.name, account.password);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_LONG).show();
         }
-        // Use a custom info window adapter to handle multiple lines of text in the
-        // info window contents.
+
+
+    // Use a custom info window adapter to handle multiple lines of text in the
+    // info window contents.
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
-            @Override
-            // Return null here, so that getInfoContents() is called next.
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
+        @Override
+        // Return null here, so that getInfoContents() is called next.
+        public View getInfoWindow(Marker arg0) {
+            return null;
+        }
 
-            @Override
-            public View getInfoContents(Marker marker) {
-                // Inflate the layouts for the info window, title and snippet.
-                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                        (FrameLayout) findViewById(R.id.map), false);
+        @Override
+        public View getInfoContents(Marker marker) {
+            // Inflate the layouts for the info window, title and snippet.
+            View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+                    (FrameLayout) findViewById(R.id.map), false);
 
-                TextView title = ((TextView) infoWindow.findViewById(R.id.title));
-                title.setText(marker.getTitle());
+            TextView title = ((TextView) infoWindow.findViewById(R.id.title));
+            title.setText(marker.getTitle());
 
-                TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));
-                snippet.setText(marker.getSnippet());
+            TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));
+            snippet.setText(marker.getSnippet());
 
-                return infoWindow;
-            }
-        });
+            return infoWindow;
+        }
+    });
 
-        // Prompt the user for permission.
-        getLocationPermission();
+    // Prompt the user for permission.
+    getLocationPermission();
 
-        // Turn on the My Location layer and the related control on the map.
-        updateLocationUI();
+    // Turn on the My Location layer and the related control on the map.
+    updateLocationUI();
 
-        // Get the current location of the device and set the position of the map.
-        getDeviceLocation();
-    }
+    // Get the current location of the device and set the position of the map.
+    getDeviceLocation();
+}
 
     /**
      * Gets the current location of the device, and positions the map's camera.
@@ -235,6 +310,7 @@ public class MapActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Location> task) {
                         if (task.isSuccessful()) {
                             // Set the map's camera position to the current location of the device.
+
                             mLastKnownLocation = task.getResult();
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
@@ -368,6 +444,7 @@ public class MapActivity extends AppCompatActivity
                     .position(mDefaultLocation)
                     .snippet(getString(R.string.default_info_snippet)));
 
+
             // Prompt the user for permission.
             getLocationPermission();
         }
@@ -416,6 +493,7 @@ public class MapActivity extends AppCompatActivity
             return;
         }
         try {
+
             if (mLocationPermissionGranted) {
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);

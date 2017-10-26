@@ -13,6 +13,7 @@ public class AppDataStrings{
 
     public AppDataViews adv;
     public String passwordVerification = null;
+    
 
     public AppDataStrings(AppDataViews _adv){
         adv = _adv;
