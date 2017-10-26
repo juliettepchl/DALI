@@ -34,6 +34,8 @@ public  class MainApp extends AppCompatActivity  {
     private Bitmap bitmap;
     private Button signout;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +56,8 @@ public  class MainApp extends AppCompatActivity  {
 
         slidingTabLayout.createDefaultTabView(this);
         slidingTabLayout.setViewPager(mViewPager);
+
+        Bundle extras = getIntent().getExtras();
 
 
 

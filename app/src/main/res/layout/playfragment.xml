@@ -26,7 +26,7 @@
         android:layout_height="match_parent">
 
         <EditText
-            android:id="@+id/editText4"
+            android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -44,6 +44,21 @@
             android:textSize="24sp"
             android:visibility="visible"
             tools:ignore="LabelFor" />
+
+        <EditText
+            android:id="@+id/Score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:clickable="false"
+            android:ems="10"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:fontFamily="casual"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textColor="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
+            android:textSize="24sp" />
 
     </RelativeLayout>
 

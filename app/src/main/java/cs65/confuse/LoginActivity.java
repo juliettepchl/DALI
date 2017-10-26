@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -56,6 +57,7 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
     private String newPassword;
     private boolean isDifferent;
     private GsonVolley gv;
+    public Account account;
 
 
     //use Shared Preferences to load data
@@ -179,6 +181,7 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
                 if (attemptLogin()) {
                     Login();
                     Intent myIntent = new Intent(LoginActivity.this, MainApp.class);
+                    myIntent.putExtra("userInfo", (Parcelable) ads);
                     startActivity(myIntent);
                 }
             }
@@ -360,8 +363,8 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
         gv.doPost(buildJSONRequest());
     }
 
-    private Account buildAccount(){
-        Account account = new Account();
+    public Account buildAccount(){
+        account = new Account();
         account.password = ads.getPassword();
         account.fullName = ads.getFullName();
         account.name = ads.getCharacterName();

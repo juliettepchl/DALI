@@ -50,5 +50,6 @@
     <string name="confirm_password">Confirm password</string>
     <string name="score">Score</string>
     <string name="map_activity_name">MapActivity</string>
+    <string name="score_string">Your current score is:</string>
 
 </resources>

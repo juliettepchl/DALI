@@ -32,10 +32,11 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GsonVolley extends AppCompatActivity {
-
+    public Cat[] catList;
     public Account account;
     private String req;
 
@@ -207,7 +208,7 @@ public class GsonVolley extends AppCompatActivity {
     public void doGet(final Activity activity, String name, String password) throws MalformedURLException {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
-        URL url = new URL("http://cs65.cs.dartmouth.edu/profile?name="+name+"&password="+password);
+        URL url = new URL("http://cs65.cs.dartmouth.edu/catlist.pl?name="+name+"&password="+password+"&mode=easy");
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
                 new Response.Listener<String>() {
@@ -216,8 +217,8 @@ public class GsonVolley extends AppCompatActivity {
                         try {
                             // parse the string, based on provided class object as template
                             Gson gson = new GsonBuilder().create();
-                            account = gson.fromJson(response, Account.class);
-                            }
+                            catList = gson.fromJson(response, Cat[].class);
+                        }
 
                         catch( Exception e){
                             Log.d("JSON", e.toString());
@@ -243,4 +244,7 @@ public class GsonVolley extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    public Cat[] getCatList() {
+        return catList;
+    }
 }

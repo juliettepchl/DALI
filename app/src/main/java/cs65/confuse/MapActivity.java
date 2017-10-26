@@ -12,8 +12,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.GeoDataClient;
@@ -31,6 +34,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import java.net.MalformedURLException;
 
 /**
  * An activity that displays a map showing the place at the device's current location.
@@ -70,10 +75,33 @@ public class MapActivity extends AppCompatActivity
     private String[] mLikelyPlaceAddresses;
     private String[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
+    private GsonVolley gv;
+
+
+    private Cat[] catList;
+
+
+    private static final LatLng test = new LatLng(43.704561, -72.291015);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Get the cat locations
+        gv = new GsonVolley();
+        SaveData sd = new SaveData(this);
+        sd.initialize();
+        Account account = sd.load();
+
+        try {
+            gv.doGet(MapActivity.this, account.name, account.password);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Fuck, something went wrong", Toast.LENGTH_LONG).show();
+        }
+
+
+
 
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
@@ -98,6 +126,7 @@ public class MapActivity extends AppCompatActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
     }
 
     /**
@@ -111,6 +140,8 @@ public class MapActivity extends AppCompatActivity
             super.onSaveInstanceState(outState);
         }
     }
+
+
 
     /**
      * Sets up the options menu.
@@ -144,6 +175,14 @@ public class MapActivity extends AppCompatActivity
     public void onMapReady(GoogleMap map) {
         mMap = map;
 
+        catList = gv.getCatList();
+        for(int i = 0; i < catList.length; i++){
+            Cat cat = catList[i];
+            LatLng pos = new LatLng(cat.lat, cat.lng);
+            Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title(cat.name));
+            marker.setVisible(true);
+            marker.setTag(cat.catId);
+        }
         // Use a custom info window adapter to handle multiple lines of text in the
         // info window contents.
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {

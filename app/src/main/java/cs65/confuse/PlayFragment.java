@@ -5,6 +5,7 @@ package cs65.confuse;
  * interactive tab of the sliding tab layout.
  */
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,11 +27,18 @@ public class PlayFragment extends Fragment {
         return inflater.inflate(R.layout.playfragment, container, false);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         playButton = view.findViewById(R.id.playButton);
+
+        SaveData sd = new SaveData(getActivity());
+        sd.initialize();
+        Account account = sd.load();
+        ((EditText)view.findViewById(R.id.name)).setText(String.format("Hello, %s!", account.name));
+        ((EditText)view.findViewById(R.id.Score)).setText("Your current score is:");
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
