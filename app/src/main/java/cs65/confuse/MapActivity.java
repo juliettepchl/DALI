@@ -37,6 +37,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -93,6 +94,7 @@ public class MapActivity extends AppCompatActivity
     private String[] mLikelyPlaceAddresses;
     private String[] mLikelyPlaceAttributions;
     private LatLng[] mLikelyPlaceLatLngs;
+    private Marker curr_marker;
     //account var
     private Account account;
 
@@ -104,6 +106,7 @@ public class MapActivity extends AppCompatActivity
 
 
     private static final LatLng test = new LatLng(43.704561, -72.291015);
+    private int minDistance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,12 +133,11 @@ public class MapActivity extends AppCompatActivity
         pet_button = findViewById(R.id.pet_button);
         pet_button.bringToFront();
 
-
         pet_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    if (curr_cat != null){
+                    if (curr_cat != null && amICloseEnough(curr_cat)){
                         doPet(MapActivity.this, account.name, account.password, curr_cat);
                     } else {
                         //Toast.makeText(getApplicationContext(), "Click but bad", Toast.LENGTH_LONG).show();
@@ -185,7 +187,15 @@ public class MapActivity extends AppCompatActivity
 //
 //    }
 
-
+    private boolean amICloseEnough(Cat goalCat){
+        Location catLocation = new Location("");
+        catLocation.setLatitude(goalCat.lat);
+        catLocation.setLongitude(goalCat.lng);
+        float distanceInMeters =  catLocation.distanceTo(mLastKnownLocation);
+        minDistance = 200;
+        if(distanceInMeters < minDistance) return true;
+        return false;
+    }
 
     /**
      * Sets up the options menu.
@@ -270,7 +280,6 @@ public class MapActivity extends AppCompatActivity
     @Override
     public void onMapReady(final GoogleMap map) {
         mMap = map;
-
         try {
             doGet(MapActivity.this, account.name, account.password);
         } catch (MalformedURLException e) {
@@ -284,6 +293,7 @@ public class MapActivity extends AppCompatActivity
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                curr_marker = marker;
                 curr_cat_name = (String)(marker.getTag());
                 for (int i = 0; i < catList.length; i ++){
                     if (catList[i].name.toString().equals(curr_cat_name)){
@@ -552,9 +562,7 @@ public class MapActivity extends AppCompatActivity
 
     public void doPet(final Activity activity, String name, String password, Cat cat) throws MalformedURLException {
         // Instantiate the RequestQueue.
-        if (cat == null){
-            Toast.makeText(activity, "boo cat is null!", Toast.LENGTH_SHORT).show();
-        }
+
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
         String lat = Float.toString(cat.lat);
         String lng = Float.toString(cat.lng);
@@ -570,9 +578,7 @@ public class MapActivity extends AppCompatActivity
                             Pet_Status petted = gson.fromJson(response, Pet_Status.class);
 
                             if (petted.status.equals("OK")){
-
-
-
+                                curr_marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 Toast.makeText(MapActivity.this, "Congratulations!", Toast.LENGTH_LONG).show();
                                 for (int i = 0; i < catList.length; i ++){
                                     if (petted.catId.equals(catList[i].catId)){
