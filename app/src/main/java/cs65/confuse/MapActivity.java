@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -44,6 +45,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.soundcloud.android.crop.Crop;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -94,9 +96,11 @@ public class MapActivity extends AppCompatActivity
     //account var
     private Account account;
 
-
+    private Button pet_button;
 
     private Cat[] catList;
+
+    private Cat curr_cat;
 
 
     private static final LatLng test = new LatLng(43.704561, -72.291015);
@@ -123,6 +127,25 @@ public class MapActivity extends AppCompatActivity
 
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_map);
+        pet_button = findViewById(R.id.pet_button);
+        pet_button.bringToFront();
+
+
+        pet_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    if (curr_cat != null){
+                        doPet(MapActivity.this, account.name, account.password, curr_cat);
+                    } else {
+                        //Toast.makeText(getApplicationContext(), "Click but bad", Toast.LENGTH_LONG).show();
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    //Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         // Construct a GeoDataClient.
         mGeoDataClient = Places.getGeoDataClient(this, null);
@@ -213,9 +236,6 @@ public class MapActivity extends AppCompatActivity
                                     Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title(cat.name));
                                     marker.setVisible(true);
                                     marker.setTag(cat.name);
-
-
-
                                 }
                             }
 
@@ -257,51 +277,60 @@ public class MapActivity extends AppCompatActivity
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_LONG).show();
         }
+
+
+
+
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 curr_cat_name = (String)(marker.getTag());
+                for (int i = 0; i < catList.length; i ++){
+                    if (catList[i].name.toString().equals(curr_cat_name)){
+                        curr_cat = catList[i];
+                    }
+                }
                 ((EditText)findViewById(R.id.CatSelect)).setText(curr_cat_name);
                 return false;
             }
         });
 
 
-    // Use a custom info window adapter to handle multiple lines of text in the
-    // info window contents.
+        // Use a custom info window adapter to handle multiple lines of text in the
+        // info window contents.
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
-        @Override
-        // Return null here, so that getInfoContents() is called next.
-        public View getInfoWindow(Marker arg0) {
-            return null;
-        }
+            @Override
+            // Return null here, so that getInfoContents() is called next.
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
 
-        @Override
-        public View getInfoContents(Marker marker) {
-            // Inflate the layouts for the info window, title and snippet.
-            View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
-                    (FrameLayout) findViewById(R.id.map), false);
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Inflate the layouts for the info window, title and snippet.
+                View infoWindow = getLayoutInflater().inflate(R.layout.custom_info_contents,
+                        (FrameLayout) findViewById(R.id.map), false);
 
-            TextView title = ((TextView) infoWindow.findViewById(R.id.title));
-            title.setText(marker.getTitle());
+                TextView title = ((TextView) infoWindow.findViewById(R.id.title));
+                title.setText(marker.getTitle());
 
-            TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));
-            snippet.setText(marker.getSnippet());
+                TextView snippet = ((TextView) infoWindow.findViewById(R.id.snippet));
+                snippet.setText(marker.getSnippet());
 
-            return infoWindow;
-        }
-    });
+                return infoWindow;
+            }
+        });
 
-    // Prompt the user for permission.
-    getLocationPermission();
+        // Prompt the user for permission.
+        getLocationPermission();
 
-    // Turn on the My Location layer and the related control on the map.
-    updateLocationUI();
+        // Turn on the My Location layer and the related control on the map.
+        updateLocationUI();
 
-    // Get the current location of the device and set the position of the map.
-    getDeviceLocation();
-}
+        // Get the current location of the device and set the position of the map.
+        getDeviceLocation();
+    }
 
     /**
      * Gets the current location of the device, and positions the map's camera.
@@ -519,4 +548,67 @@ public class MapActivity extends AppCompatActivity
             Log.e("Exception: %s", e.getMessage());
         }
     }
+
+
+    public void doPet(final Activity activity, String name, String password, Cat cat) throws MalformedURLException {
+        // Instantiate the RequestQueue.
+        if (cat == null){
+            Toast.makeText(activity, "boo cat is null!", Toast.LENGTH_SHORT).show();
+        }
+        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
+        String lat = Float.toString(cat.lat);
+        String lng = Float.toString(cat.lng);
+        URL url = new URL(String.format("http://cs65.cs.dartmouth.edu/pat.pl?name="+name+"&password="+password+"&catid="+cat.catId+"&lat="+lat+"&lng="+lng));
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // parse the string, based on provided class object as template
+                            Gson gson = new GsonBuilder().create();
+                            Pet_Status petted = gson.fromJson(response, Pet_Status.class);
+
+                            if (petted.status.equals("OK")){
+
+
+
+                                Toast.makeText(MapActivity.this, "Congratulations!", Toast.LENGTH_LONG).show();
+                                for (int i = 0; i < catList.length; i ++){
+                                    if (petted.catId.equals(catList[i].catId)){
+                                        catList[i].petted = true;
+                                    }
+                                }
+
+                            } else {
+                                Toast.makeText(MapActivity.this, petted.reason, Toast.LENGTH_LONG).show();
+                            }
+
+
+                        }
+
+                        catch( Exception e){
+                            Log.d("JSON", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+            // This to set custom headers:
+            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json"); // or else HTTP code 500
+                return params;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
 }
+
+
