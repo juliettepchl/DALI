@@ -44,16 +44,17 @@ public class SaveData {
     private SharedPreferences appPrefs;
     private Bitmap b;
 
-    public SaveData(Activity _activity){
+    public SaveData(Activity _activity) {
         activity = _activity;
 
     }
-    public void initialize(){
-         appPrefs = activity.getSharedPreferences("cs65.confuse.LoginActivity_preferences", Context.MODE_PRIVATE);
+
+    public void initialize() {
+        appPrefs = activity.getSharedPreferences("cs65.confuse.LoginActivity_preferences", Context.MODE_PRIVATE);
     }
 
     //method called to save all the data to local storage including text edits and image
-    public void save(Account account){
+    public void save(Account account) {
         SharedPreferences.Editor prefsEditor = appPrefs.edit();
         prefsEditor.putString("password", account.password);
         prefsEditor.commit();
@@ -70,14 +71,14 @@ public class SaveData {
     //function called to load data from previously saved shared preferences.
     public Account load() {
         Account account = new Account();
-        account.name =appPrefs.getString("userName", "");
-        account.fullName= appPrefs.getString("fullName", "");
-        account.password=appPrefs.getString("password", "");
+        account.name = appPrefs.getString("userName", "");
+        account.fullName = appPrefs.getString("fullName", "");
+        account.password = appPrefs.getString("password", "");
         account.prof = loadImage(appPrefs.getString("path", ""));
         return account;
     }
 
-    public Bitmap getImage(){
+    public Bitmap getImage() {
         return b;
 
     }
@@ -89,9 +90,7 @@ public class SaveData {
             File f = new File(path);
             b = BitmapFactory.decodeStream(new FileInputStream(f));
             return b;
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -125,6 +124,16 @@ public class SaveData {
         return mypath;
     }
 
+    public void saveDiff(String diff) {
+        SharedPreferences.Editor prefsEditor = appPrefs.edit();
+        prefsEditor.putString("diff", diff);
+        prefsEditor.commit();
     }
+
+    public String loadDiff() {
+        String diff = appPrefs.getString("diff", "");
+        return diff;
+    }
+}
 
 

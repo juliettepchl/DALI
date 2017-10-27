@@ -108,16 +108,18 @@ public class MapActivity extends AppCompatActivity
 
     private Cat curr_cat;
 
+    private SaveData sd;
+
 
     private static final LatLng test = new LatLng(43.704561, -72.291015);
-    private int minDistance;
+    private int minDistance = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //Get the cat locations
-        SaveData sd = new SaveData(this);
+        sd = new SaveData(this);
         sd.initialize();
         account = sd.load();
 
@@ -142,10 +144,15 @@ public class MapActivity extends AppCompatActivity
             public void onClick(View view) {
                 try {
                     if (curr_cat != null && amICloseEnough(curr_cat)){
-                        doPet(MapActivity.this, account.name, account.password, curr_cat);
-                    } else {
-                        //Toast.makeText(getApplicationContext(), "Click but bad", Toast.LENGTH_LONG).show();
+                        if (curr_cat.petted == false){
+                            doPet(MapActivity.this, account.name, account.password, curr_cat);
+                        } else{
+                            Toast.makeText(MapActivity.this, "Cat already petted!", Toast.LENGTH_LONG).show();
+                        }
+                    } if (!amICloseEnough(curr_cat)) {
+                        Toast.makeText(MapActivity.this, "Cat too far!", Toast.LENGTH_LONG).show();
                     }
+
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     //Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_LONG).show();
@@ -196,7 +203,6 @@ public class MapActivity extends AppCompatActivity
         catLocation.setLatitude(goalCat.lat);
         catLocation.setLongitude(goalCat.lng);
         float distanceInMeters =  catLocation.distanceTo(mLastKnownLocation);
-        minDistance = 2000;
         if(distanceInMeters < minDistance) return true;
         return false;
     }
@@ -233,7 +239,10 @@ public class MapActivity extends AppCompatActivity
     public void doGet(final Activity activity, String name, String password) throws MalformedURLException {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
-        URL url = new URL("http://cs65.cs.dartmouth.edu/catlist.pl?name="+name+"&password="+password+"&mode=easy");
+        String diff = sd.loadDiff();
+
+        URL url = new URL("http://cs65.cs.dartmouth.edu/catlist.pl?name="+name+"&password="+password+"&mode="+diff);
+        Toast.makeText(activity, "getting cats in " + diff + " mode.", Toast.LENGTH_LONG).show();
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
                 new Response.Listener<String>() {
@@ -250,6 +259,9 @@ public class MapActivity extends AppCompatActivity
                                     Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title(cat.name));
                                     marker.setVisible(true);
                                     marker.setTag(cat.name);
+                                    if (cat.petted == true){
+                                        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                                    }
                                 }
                             }
 
@@ -304,13 +316,19 @@ public class MapActivity extends AppCompatActivity
                         curr_cat = catList[i];
                     }
 
+
                     //try {
                       //  Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(curr_cat.picUrl).getContent());
                    // } catch (IOException e) {
                     //    e.printStackTrace();
                     //}
                 }
-                ((EditText)findViewById(R.id.CatSelect)).setText(curr_cat_name);
+                Location catLocation = new Location("");
+                catLocation.setLatitude(curr_cat.lat);
+                catLocation.setLongitude(curr_cat.lng);
+                float distanceInMeters =  catLocation.distanceTo(mLastKnownLocation);
+                String dist = Float.toString(distanceInMeters);
+                ((EditText)findViewById(R.id.CatSelect)).setText(String.format("%s is %sm away", curr_cat_name, dist));
                 return false;
             }
         });
@@ -628,57 +646,6 @@ public class MapActivity extends AppCompatActivity
         queue.add(stringRequest);
     }
 
-
-    public void doReset(final Activity activity, String name, String password) throws MalformedURLException {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
-
-        URL url = new URL(String.format("http://cs65.cs.dartmouth.edu/reset.pl?name="+name+"&password="+password));
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            // parse the string, based on provided class object as template
-                            Gson gson = new GsonBuilder().create();
-                            Reset_Status reset = gson.fromJson(response, Reset_Status.class);
-
-                            if (reset.status.equals("OK")){
-
-
-
-                                Toast.makeText(MapActivity.this, "Cats unpetted!", Toast.LENGTH_LONG).show();
-                                for (int i = 0; i < catList.length; i ++){
-                                        catList[i].petted = false;
-                                    }
-                                }
-                             else {
-                                Toast.makeText(MapActivity.this, reset.status, Toast.LENGTH_LONG).show();
-                            }
-                        }
-                        catch( Exception e){
-                            Log.d("JSON", e.toString());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                }) {
-            // This to set custom headers:
-            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Accept", "application/json"); // or else HTTP code 500
-                return params;
-            }
-        };
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
 }
 
 
