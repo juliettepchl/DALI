@@ -2,6 +2,8 @@ package cs65.confuse;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -48,6 +50,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.soundcloud.android.crop.Crop;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -192,7 +196,7 @@ public class MapActivity extends AppCompatActivity
         catLocation.setLatitude(goalCat.lat);
         catLocation.setLongitude(goalCat.lng);
         float distanceInMeters =  catLocation.distanceTo(mLastKnownLocation);
-        minDistance = 200;
+        minDistance = 2000;
         if(distanceInMeters < minDistance) return true;
         return false;
     }
@@ -299,6 +303,12 @@ public class MapActivity extends AppCompatActivity
                     if (catList[i].name.toString().equals(curr_cat_name)){
                         curr_cat = catList[i];
                     }
+
+                    //try {
+                      //  Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(curr_cat.picUrl).getContent());
+                   // } catch (IOException e) {
+                    //    e.printStackTrace();
+                    //}
                 }
                 ((EditText)findViewById(R.id.CatSelect)).setText(curr_cat_name);
                 return false;
