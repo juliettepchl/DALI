@@ -38,7 +38,8 @@ public class PlayFragment extends Fragment {
         sd.initialize();
         Account account = sd.load();
         ((EditText)view.findViewById(R.id.name)).setText(String.format("Hello, %s!", account.name));
-        ((EditText)view.findViewById(R.id.Score)).setText("Your current score is:");
+        ((EditText)view.findViewById(R.id.Score)).setText("Your current score is: " +account.score.toString()
+        );
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
