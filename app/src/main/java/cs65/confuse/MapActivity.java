@@ -581,7 +581,9 @@ public class MapActivity extends AppCompatActivity
                                 }
 
                             } else {
+
                                 Toast.makeText(MapActivity.this, petted.reason, Toast.LENGTH_LONG).show();
+
                             }
 
 
@@ -609,6 +611,59 @@ public class MapActivity extends AppCompatActivity
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
+
+
+    public void doReset(final Activity activity, String name, String password) throws MalformedURLException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
+
+        URL url = new URL(String.format("http://cs65.cs.dartmouth.edu/reset.pl?name="+name+"&password="+password));
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // parse the string, based on provided class object as template
+                            Gson gson = new GsonBuilder().create();
+                            Reset_Status reset = gson.fromJson(response, Reset_Status.class);
+
+                            if (reset.status.equals("OK")){
+
+
+
+                                Toast.makeText(MapActivity.this, "Cats unpetted!", Toast.LENGTH_LONG).show();
+                                for (int i = 0; i < catList.length; i ++){
+                                        catList[i].petted = false;
+                                    }
+                                }
+                             else {
+                                Toast.makeText(MapActivity.this, reset.status, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        catch( Exception e){
+                            Log.d("JSON", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+            // This to set custom headers:
+            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json"); // or else HTTP code 500
+                return params;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
 }
+
 
 
