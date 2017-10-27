@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -189,14 +190,7 @@ public class MapActivity extends AppCompatActivity
         }
     }
 
-//    //load data from savedInstanceState bundle
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//
-//        Log.d("STATE", "onRestoreState");
-//
-//    }
+
 
     private boolean amICloseEnough(Cat goalCat){
         Location catLocation = new Location("");
@@ -207,7 +201,7 @@ public class MapActivity extends AppCompatActivity
         if (mode.equals("easy")){
             minDistance = 200;
         } else {
-            minDistance = 20; //update difficulty if the user is too far away. 
+            minDistance = 20; //update difficulty if the user is too far away.
         }
         if(distanceInMeters < minDistance) return true;
         return false;
@@ -322,12 +316,13 @@ public class MapActivity extends AppCompatActivity
                         curr_cat = catList[i];
                     }
 
-
-                    //try {
-                      //  Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(curr_cat.picUrl).getContent());
-                   // } catch (IOException e) {
-                    //    e.printStackTrace();
-                    //}
+                        //TODO here JU
+//                    try {
+//                        Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(curr_cat.picUrl).getContent());
+//                        ((ImageView)findViewById(R.id.catpic)).setImageBitmap(bitmap);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
                 }
                 Location catLocation = new Location("");
                 catLocation.setLatitude(curr_cat.lat);
