@@ -203,6 +203,12 @@ public class MapActivity extends AppCompatActivity
         catLocation.setLatitude(goalCat.lat);
         catLocation.setLongitude(goalCat.lng);
         float distanceInMeters =  catLocation.distanceTo(mLastKnownLocation);
+        String mode = sd.loadDiff();
+        if (mode.equals("easy")){
+            minDistance = 200;
+        } else {
+            minDistance = 20; //update difficulty if the user is too far away. 
+        }
         if(distanceInMeters < minDistance) return true;
         return false;
     }
