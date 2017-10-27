@@ -54,11 +54,14 @@ import java.util.Map;
  * An activity that displays a map showing the place at the device's current location.
  */
 public class MapActivity extends AppCompatActivity
-        implements OnMapReadyCallback {
+        implements OnMapReadyCallback  {
 
     private static final String TAG = MapActivity.class.getSimpleName();
     private GoogleMap mMap;
     private CameraPosition mCameraPosition;
+
+    //current cat name
+    private String curr_cat_name;
 
     // The entry points to the Places API.
     private GeoDataClient mGeoDataClient;
@@ -209,7 +212,7 @@ public class MapActivity extends AppCompatActivity
                                     LatLng pos = new LatLng(cat.lat, cat.lng);
                                     Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title(cat.name));
                                     marker.setVisible(true);
-                                    marker.setTag(cat.catId);
+                                    marker.setTag(cat.name);
 
 
 
@@ -244,10 +247,8 @@ public class MapActivity extends AppCompatActivity
 
 
 
-
-
     @Override
-    public void onMapReady(GoogleMap map) {
+    public void onMapReady(final GoogleMap map) {
         mMap = map;
 
         try {
@@ -256,6 +257,14 @@ public class MapActivity extends AppCompatActivity
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_LONG).show();
         }
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                curr_cat_name = (String)(marker.getTag());
+                ((EditText)findViewById(R.id.CatSelect)).setText(curr_cat_name);
+                return false;
+            }
+        });
 
 
     // Use a custom info window adapter to handle multiple lines of text in the
@@ -449,6 +458,9 @@ public class MapActivity extends AppCompatActivity
             getLocationPermission();
         }
     }
+
+
+
 
     /**
      * Displays a form allowing the user to select a place from a list of likely places.

@@ -2,35 +2,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color">
 
 
-    <LinearLayout
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@+id/CatSelect"
         android:layout_alignParentStart="true"
-        android:background="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color"
-        android:orientation="vertical"
-        android:visibility="visible">
+        tools:context="cs65.confuse.MapActivity" />
 
-        <fragment
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="508dp"
-            tools:context="cs65.confuse.MapActivity" />
+    <Button
+        android:id="@+id/pet"
+        style="@style/Widget.AppCompat.ActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/map"
+        android:background="@color/fullNameColor"
+        android:text="PET"
+        android:visibility="visible" />
 
-        <EditText
-            style="@style/Widget.AppCompat.Light.AutoCompleteTextView"
-            android:layout_width="match_parent"
-            android:layout_height="51dp"
-            android:clickable="false"
-            android:ems="10"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:inputType="textMultiLine"
-            android:text="Hello! Please click on a paw!" />
-
-    </LinearLayout>
+    <EditText
+        android:id="@+id/CatSelect"
+        style="@style/Widget.AppCompat.Light.AutoCompleteTextView"
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:clickable="false"
+        android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:inputType="textMultiLine"
+        android:text="Hello! Please click on a paw!" />
 
 </RelativeLayout>
