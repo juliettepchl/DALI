@@ -1,4 +1,5 @@
 package cs65.confuse;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.Toast;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -28,7 +30,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.soundcloud.android.crop.Crop;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +52,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -65,11 +77,9 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
     private AppDataViews adv;
     private SaveData sd;
     private File f;
-    private boolean isTakenFromCamera;
     private String prevPassword;
     private String newPassword;
     private boolean isDifferent;
-    private GsonVolley gv;
     public Account account;
     private String req;
 
@@ -117,9 +127,9 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {gv = new GsonVolley();
+            public void afterTextChanged(Editable editable) {
                 try {
-                    gv.CheckUserName(LoginActivity.this, ads.getCharacterName());
+                    CheckUserName(LoginActivity.this, ads.getCharacterName());
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }}
@@ -183,7 +193,6 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
             public void onClick(View view) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    isTakenFromCamera = true;
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 }
             }
@@ -460,6 +469,52 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
             total.append(line).append('\n');
         }
         return total.toString();
+    }
+
+    public void CheckUserName(final Activity activity, String name) throws MalformedURLException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
+        URL url = new URL("http://cs65.cs.dartmouth.edu/nametest.pl?name="+name);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // parse the string, based on provided class object as template
+                            Gson gson = new GsonBuilder().create();
+                            account = gson.fromJson(response, Account.class);
+                            if(account.avail) {
+                                Checkable checkBox = activity.findViewById(R.id.availableButton);
+                                checkBox.setChecked(true);
+                            }
+                            else{
+                                Checkable checkBox = activity.findViewById(R.id.availableButton);
+                                checkBox.setChecked(false);
+                            }
+                        }
+                        catch( Exception e){
+                            Log.d("JSON", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+            // This to set custom headers:
+            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json"); // or else HTTP code 500
+                return params;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 
 }

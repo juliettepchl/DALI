@@ -42,6 +42,7 @@ public class SignIn extends AppCompatActivity {
         sd = new SaveData(this);
         sd.initialize();
         account = sd.load();
+
         if(account !=null){
             ((EditText)findViewById(R.id.characterName)).setText(account.name);
             ((EditText)findViewById(R.id.password)).setText(account.password);
@@ -99,13 +100,6 @@ public class SignIn extends AppCompatActivity {
 
     }
 
-    public Account refreshAccountInfo(){
-        account.name=((EditText)findViewById(R.id.characterName)).getText().toString();
-        account.password=((EditText)findViewById(R.id.password)).getText().toString();
-        return account;
-    }
-
-
     public void AttemptLogin(final Activity activity, String name, String password) throws MalformedURLException {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
@@ -120,6 +114,9 @@ public class SignIn extends AppCompatActivity {
                             account = gson.fromJson(response, Account.class);
 
                             if(account.error == null) {
+                                sd = new SaveData(activity);
+                                sd.initialize();
+                                sd.save(account);
                                 Intent i = new Intent(activity.getApplicationContext(), MainApp.class);
                                 activity.startActivity(i);
                             }

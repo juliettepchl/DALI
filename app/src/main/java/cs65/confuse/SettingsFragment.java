@@ -65,13 +65,9 @@ public class SettingsFragment extends Fragment {
         sd = new SaveData(getActivity());
         sd.initialize();
         account = sd.load();
-        try {
-            getAccount(getActivity(), account.name, account.password);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
         sd.saveDiff(mode);
         ((EditText)view.findViewById(R.id.name)).setText(account.name);
+        ((EditText)view.findViewById(R.id.password)).setText(account.password);
         profile_imageview = view.findViewById(R.id.profile_pic);
         //profile_imageview.setImageBitmap(account.prof);
         signout = view.findViewById(R.id.sign_out);
@@ -170,47 +166,4 @@ public class SettingsFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
-    public void getAccount(final Activity activity, String name, String password) throws MalformedURLException {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
-        URL url = new URL("http://cs65.cs.dartmouth.edu/profile.pl?name="+name+"&password="+password);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            // parse the string, based on provided class object as template
-                            Gson gson = new GsonBuilder().create();
-                            account = gson.fromJson(response, Account.class);
-                            byte[] decodedBytes = Base64.decode(account.profile_pic, 0);
-                            account.prof = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-                            profile_imageview.setImageBitmap(account.prof);
-
-
-                        }
-                        catch( Exception e){
-                            Log.d("JSON", e.toString());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                }) {
-
-            // This to set custom headers:
-            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Accept", "application/json"); // or else HTTP code 500
-                return params;
-            }
-        };
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
-    }
-
 }

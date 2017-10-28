@@ -57,5 +57,6 @@
     <string name="success">Success!!</string>
     <string name="done">Done</string>
     <string name="again">Again</string>
+    <string name="password">password</string>
 
 </resources>
