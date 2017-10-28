@@ -47,9 +47,6 @@ public class SettingsFragment extends Fragment {
     public String mode = "easy";
     private SaveData sd;
 
-    public String getMode() {
-        return mode;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -64,6 +61,7 @@ public class SettingsFragment extends Fragment {
         sd = new SaveData(getActivity());
         sd.initialize();
         account = sd.load();
+        sd.saveDiff(mode);
         ((EditText)view.findViewById(R.id.name)).setText(account.name);
         ((ImageView)view.findViewById(R.id.profile_pic)).setImageBitmap(account.prof);
         signout = view.findViewById(R.id.sign_out);

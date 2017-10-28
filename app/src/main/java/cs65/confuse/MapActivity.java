@@ -51,12 +51,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.soundcloud.android.crop.Crop;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 /**
  * An activity that displays a map showing the place at the device's current location.
@@ -106,6 +112,7 @@ public class MapActivity extends AppCompatActivity
     private Button pet_button;
 
     private Cat[] catList;
+    private Bitmap myBitmap;
 
     private Cat curr_cat;
 
@@ -259,7 +266,7 @@ public class MapActivity extends AppCompatActivity
                                     Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title(cat.name));
                                     marker.setVisible(true);
                                     marker.setTag(cat.name);
-                                    if (cat.petted == true){
+                                    if (cat.petted){
                                         marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                     }
                                 }
@@ -293,6 +300,8 @@ public class MapActivity extends AppCompatActivity
 
 
 
+
+
     @Override
     public void onMapReady(final GoogleMap map) {
         mMap = map;
@@ -311,19 +320,31 @@ public class MapActivity extends AppCompatActivity
             public boolean onMarkerClick(Marker marker) {
                 curr_marker = marker;
                 curr_cat_name = (String)(marker.getTag());
-                for (int i = 0; i < catList.length; i ++){
-                    if (catList[i].name.toString().equals(curr_cat_name)){
+                for (int i=0; i < catList.length; i ++) {
+                    if (catList[i].name.equals(curr_cat_name)) {
                         curr_cat = catList[i];
                     }
-
-                        //TODO here JU
-//                    try {
-//                        Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL(curr_cat.picUrl).getContent());
-//                        ((ImageView)findViewById(R.id.catpic)).setImageBitmap(bitmap);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
                 }
+                Thread t = new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            URL url = new URL(curr_cat.picUrl);
+                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                            connection.setDoInput(true);
+                            connection.connect();
+                            InputStream input = connection.getInputStream();
+                            myBitmap = BitmapFactory.decodeStream(input);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                t.start();
+                if (myBitmap != null) {
+                    ((ImageView) findViewById(R.id.catpic)).setImageBitmap(myBitmap);
+                }
+
                 Location catLocation = new Location("");
                 catLocation.setLatitude(curr_cat.lat);
                 catLocation.setLongitude(curr_cat.lng);

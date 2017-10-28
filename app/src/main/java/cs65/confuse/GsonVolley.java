@@ -90,6 +90,45 @@ public class GsonVolley extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+
+    public Account getAccount(final Activity activity, String name, String password) throws MalformedURLException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
+        URL url = new URL("http://cs65.cs.dartmouth.edu/profile.pl?name="+name+"&password="+password);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // parse the string, based on provided class object as template
+                            Gson gson = new GsonBuilder().create();
+                            account = gson.fromJson(response, Account.class);
+                        }
+                        catch( Exception e){
+                            Log.d("JSON", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+            // This to set custom headers:
+            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json"); // or else HTTP code 500
+                return params;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+        return account;
+    }
+
     public void CheckUserName(final Activity activity, String name) throws MalformedURLException {
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
@@ -205,46 +244,4 @@ public class GsonVolley extends AppCompatActivity {
         return total.toString();
     }
 
-    public void doGet(final Activity activity, String name, String password) throws MalformedURLException {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
-        URL url = new URL("http://cs65.cs.dartmouth.edu/catlist.pl?name="+name+"&password="+password+"&mode=easy");
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            // parse the string, based on provided class object as template
-                            Gson gson = new GsonBuilder().create();
-                            catList = gson.fromJson(response, Cat[].class);
-                        }
-
-                        catch( Exception e){
-                            Log.d("JSON", e.toString());
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                    }
-                }) {
-
-            // This to set custom headers:
-            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Accept", "application/json"); // or else HTTP code 500
-                return params;
-            }
-        };
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-    }
-
-    public Cat[] getCatList() {
-        return catList;
-    }
 }
