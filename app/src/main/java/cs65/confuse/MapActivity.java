@@ -268,6 +268,7 @@ public class MapActivity extends AppCompatActivity
                                     marker.setVisible(true);
                                     marker.setTag(cat.name);
                                     if (cat.petted){
+                                        //marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_paw));
                                         marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                     }
                                 }
@@ -335,6 +336,7 @@ public class MapActivity extends AppCompatActivity
                             connection.connect();
                             InputStream input = connection.getInputStream();
                             myBitmap = BitmapFactory.decodeStream(input);
+                            //curr_marker.setIcon(myBitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -411,6 +413,15 @@ public class MapActivity extends AppCompatActivity
                             // Set the map's camera position to the current location of the device.
 
                             mLastKnownLocation = task.getResult();
+                            if (curr_cat != null) {
+                                Location catLocation = new Location("");
+                                catLocation.setLatitude(curr_cat.lat);
+                                catLocation.setLongitude(curr_cat.lng);
+                                float distanceInMeters = catLocation.distanceTo(mLastKnownLocation);
+                                String dist = Float.toString(distanceInMeters);
+                                ((EditText) findViewById(R.id.CatSelect)).setText(String.format("%s is %sm away", curr_cat_name, dist));
+                            }
+
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                     new LatLng(mLastKnownLocation.getLatitude(),
                                             mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
@@ -629,6 +640,7 @@ public class MapActivity extends AppCompatActivity
                             Pet_Status petted = gson.fromJson(response, Pet_Status.class);
 
                             if (petted.status.equals("OK")){
+                                //curr_marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_paw));
                                 curr_marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                 //Toast.makeText(MapActivity.this, "Congratulations!", Toast.LENGTH_SHORT).show();
                                 for (int i = 0; i < catList.length; i ++){

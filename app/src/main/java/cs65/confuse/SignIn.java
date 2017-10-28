@@ -77,7 +77,7 @@ public class SignIn extends AppCompatActivity {
 
         super.onSaveInstanceState(outState);
         Log.d("STATE", "onSaveState");
-        sd.save(refreshAccountInfo());
+//        sd.save(refreshAccountInfo());
 
     }
 

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cast_libraries_material_featurehighlight_outer_highlight_default_color">
+    android:background="@color/cast_libraries_material_featurehighlight_text_header_color">
 
 
     <fragment
@@ -13,6 +13,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/CatSelect"
         android:layout_alignParentStart="true"
+        android:layout_marginBottom="14dp"
         tools:context="cs65.confuse.MapActivity" />
 
     <Button
@@ -31,10 +32,9 @@
     <EditText
         android:id="@+id/CatSelect"
         style="@style/Widget.AppCompat.Light.AutoCompleteTextView"
-        android:layout_width="match_parent"
-        android:layout_height="51dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="57dp"
         android:layout_toStartOf="@+id/pet_button"
         android:clickable="false"
         android:ems="10"
@@ -47,8 +47,12 @@
         android:id="@+id/catpic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/map"
-        android:layout_toStartOf="@+id/pet_button"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_dark" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/CatSelect"
+        android:layout_toStartOf="@+id/CatSelect"
+        android:scaleType="fitCenter"
+        android:visibility="visible"
+        app:srcCompat="@drawable/clickicon" />
 
 </RelativeLayout>

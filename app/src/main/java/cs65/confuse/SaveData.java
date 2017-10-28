@@ -62,9 +62,9 @@ public class SaveData {
         prefsEditor.commit();
         prefsEditor.putString("fullName", account.fullName);
         prefsEditor.commit();
-        File file = saveImage(account.prof);
-        prefsEditor.putString("path", file.getAbsolutePath());
-        prefsEditor.commit();
+//        File file = saveImage(account.prof);
+//        prefsEditor.putString("path", file.getAbsolutePath());
+//        prefsEditor.commit();
 
     }
 
@@ -110,6 +110,7 @@ public class SaveData {
         try {
             fos = new FileOutputStream(mypath);
             // Use the compress method on the BitMap object to write image to the OutputStream
+
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         } catch (Exception e) {
             e.printStackTrace();

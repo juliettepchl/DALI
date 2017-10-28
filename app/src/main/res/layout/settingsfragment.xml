@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/poney">
+    android:background="@color/wallet_highlighted_text_holo_light">
 
     <EditText
         android:id="@+id/editText"
-        android:labelFor="@+id/editText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:ems="10"
-        android:inputType="textPersonName"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:inputType="textPersonName"
+        android:labelFor="@+id/editText"
         android:text="@string/profile"
         android:textAppearance="@android:style/TextAppearance.Material.Medium"
         android:textColor="@color/fullNameColor"
@@ -43,8 +43,8 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/editText"
         android:layout_marginStart="18dp"
-        android:clickable="false"
         android:layout_marginTop="43dp"
+        android:clickable="false"
         android:contentDescription="@string/image"
         android:labelFor="@+id/profile_pic"
         android:scaleX="2"
@@ -53,16 +53,16 @@
 
     <EditText
         android:id="@+id/preferences"
-        android:labelFor="@+id/preferences"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/profile_pic"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
         android:layout_marginTop="41dp"
         android:ems="10"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:inputType="textPersonName"
+        android:labelFor="@+id/preferences"
         android:text="@string/preferences"
         android:textColor="@color/characterNameColor" />
 
@@ -79,16 +79,16 @@
     <EditText
         android:id="@+id/name"
         android:layout_width="wrap_content"
-        android:labelFor="@+id/name"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/profile_pic"
-        android:clickable="false"
         android:layout_marginStart="37dp"
+        android:layout_toEndOf="@+id/profile_pic"
+        android:clickable="false"
+        android:ems="10"
         android:focusable="false"
         android:focusableInTouchMode="false"
-        android:layout_toEndOf="@+id/profile_pic"
-        android:ems="10"
         android:inputType="textPersonName"
+        android:labelFor="@+id/name"
         android:text="@string/name" />
 
     <Switch
