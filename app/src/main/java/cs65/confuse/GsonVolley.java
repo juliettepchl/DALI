@@ -5,11 +5,12 @@ package cs65.confuse;
  */
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.Checkable;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -20,19 +21,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.json.JSONObject;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GsonVolley extends AppCompatActivity {
@@ -175,73 +166,5 @@ public class GsonVolley extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
-    public void doPost(JSONObject o){
-        req = o.toString();
-
-        new Thread(new Runnable() {
-
-            String res = null; // closed over by the post()-ed run().
-
-            @Override
-            public void run() {
-                try {
-                    URL url = new URL("http://cs65.cs.dartmouth.edu/profile.pl");
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-                    // For info on configurable headers of HTTP:
-                    // https://developer.android.com/reference/java/net/HttpURLConnection.html
-
-                    try {
-                        conn.setDoOutput(true);
-                        conn.setRequestMethod("POST");
-                        conn.setRequestProperty("Content-Type", "application/json");
-
-                        // we want to see strings going back and forth, don't compress them
-                        conn.setRequestProperty("Accept-Encoding", "identity");
-
-                        // This doesn't work with my server: CGI.pm ignores chunked requests
-                        //conn.setRequestProperty("Transfer-Encoding", "chunked");
-                        //conn.setChunkedStreamingMode(0); // we don't know how much data we'll be sending in the body
-
-                        // we must know exactly what the request body is
-                        conn.setFixedLengthStreamingMode(req.length());
-
-                        OutputStream out = new BufferedOutputStream(conn.getOutputStream());
-                        out.write(req.getBytes());
-                        out.flush();
-                        out.close();
-
-                        InputStream in = new BufferedInputStream(conn.getInputStream());
-                        res = readStream(in);
-                    }
-                    catch(Exception e){
-                        Log.d("THREAD", e.toString());
-                    } finally {
-                        conn.disconnect();
-                    }
-                }
-                catch( Exception e){
-                    Log.d("THREAD", e.toString());
-                }
-
-                if( res!= null ) {
-                    Log.d("NET POST", res);
-                }
-                else{
-                    Log.d("NET ERR", "empty result");
-                }
-            }
-        }).start();
-    }
-
-    private String readStream(InputStream in) throws IOException {
-        BufferedReader r = new BufferedReader(new InputStreamReader(in));
-        StringBuilder total = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            total.append(line).append('\n');
-        }
-        return total.toString();
-    }
 
 }

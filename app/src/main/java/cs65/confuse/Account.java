@@ -14,6 +14,7 @@ class Account {
     public String password;
     public String error;
     public Bitmap prof;
+    public String profile_pic;
     public Integer score=0;
 }
 

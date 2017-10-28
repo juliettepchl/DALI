@@ -53,5 +53,9 @@
     <string name="score_string">Your current score is:</string>
     <string name="pet">PET</string>
     <string name="hello_please_click_on_a_paw">Hello! Please click on a paw!</string>
+    <string name="title_activity_success">SuccessActivity</string>
+    <string name="success">Success!!</string>
+    <string name="done">Done</string>
+    <string name="again">Again</string>
 
 </resources>

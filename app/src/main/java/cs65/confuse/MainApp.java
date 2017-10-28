@@ -1,19 +1,14 @@
 package cs65.confuse;
 
 
-import android.app.FragmentManager;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+
 import android.widget.Toast;
 
 
@@ -31,8 +26,6 @@ public  class MainApp extends AppCompatActivity  {
     private ViewPager mViewPager;
     private ArrayList<Fragment> fragments;
     private TabsViewPagerAdapter mViewPagerAdapter;
-    private Bitmap bitmap;
-    private Button signout;
 
 
 

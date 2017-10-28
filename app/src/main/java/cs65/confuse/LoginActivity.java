@@ -4,31 +4,44 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
+
 import android.net.Uri;
-import android.os.Parcelable;
+
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import com.google.gson.Gson;
 import com.soundcloud.android.crop.Crop;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 
 /**
@@ -58,6 +71,9 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
     private boolean isDifferent;
     private GsonVolley gv;
     public Account account;
+    private String req;
+
+
 
 
     //use Shared Preferences to load data
@@ -179,9 +195,9 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
             @Override
             public void onClick(View v) {
                 if (attemptLogin()) {
-                    Login();
+                    doPost(buildJSONRequest());
                     Intent myIntent = new Intent(LoginActivity.this, MainApp.class);
-                    myIntent.putExtra("userInfo", (Parcelable) ads);
+                    //myIntent.putExtra("userInfo", (Parcelable) ads);
                     startActivity(myIntent);
                 }
             }
@@ -332,13 +348,22 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
             Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
+
     private JSONObject buildJSONRequest(){
         JSONObject o = new JSONObject();
-        Gson gson = new Gson();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b,Base64.DEFAULT);
         try {
             o.put("name", ads.getCharacterName());
             o.put( "password", ads.getPassword());
             o.put("fullName", ads.getFullName());
+            o.put("profile_pic", imageEncoded);
+            Toast.makeText(getApplicationContext(), imageEncoded, Toast.LENGTH_LONG).show();
+
+
         }
         catch( JSONException e){
             Log.d("JSON", e.toString());
@@ -346,10 +371,12 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
 
         return o;
     }
+
+
     @Override
     public void onFinishEditDialog(String inputText) {
         if(inputText.equalsIgnoreCase(ads.getPassword())){
-            Toast.makeText(getApplicationContext(), "Passwords match", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Passwords match", Toast.LENGTH_SHORT).show();
         }
         else{
             adv.getPasswordView().setError("Passwords do not match");
@@ -358,10 +385,6 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
         }
     }
 
-    public void Login(){
-        GsonVolley gv = new GsonVolley();
-        gv.doPost(buildJSONRequest());
-    }
 
     public Account buildAccount(){
         account = new Account();
@@ -369,7 +392,74 @@ public  class LoginActivity extends AppCompatActivity implements ListenerInterfa
         account.fullName = ads.getFullName();
         account.name = ads.getCharacterName();
         account.prof = bitmap;
-        account.score = 0;
         return account;
     }
+
+    //function that posts the account information to the server from a JSON object
+    public void doPost(JSONObject o){
+        req = o.toString();
+
+        new Thread(new Runnable() {
+
+            String res = null; // closed over by the post()-ed run().
+
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://cs65.cs.dartmouth.edu/profile.pl");
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                    // For info on configurable headers of HTTP:
+                    // https://developer.android.com/reference/java/net/HttpURLConnection.html
+
+                    try {
+                        conn.setDoOutput(true);
+                        conn.setRequestMethod("POST");
+                        conn.setRequestProperty("Content-Type", "application/json");
+
+                        // we want to see strings going back and forth, don't compress them
+                        conn.setRequestProperty("Accept-Encoding", "identity");
+
+                        // we must know exactly what the request body is
+                        conn.setFixedLengthStreamingMode(req.length());
+
+                        OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+                        out.write(req.getBytes());
+                        out.flush();
+                        out.close();
+
+                        InputStream in = new BufferedInputStream(conn.getInputStream());
+                        res = readStream(in);
+                    }
+                    catch(Exception e){
+                        Log.d("THREAD", e.toString());
+                    } finally {
+                        conn.disconnect();
+                    }
+                }
+                catch( Exception e){
+                    Log.d("THREAD", e.toString());
+                }
+
+                if( res!= null ) {
+                    Log.d("NET POST", res);
+                }
+                else{
+                    Log.d("NET ERR", "empty result");
+                }
+            }
+        }).start();
+    }
+
+    //helper function for doPost
+    private String readStream(InputStream in) throws IOException {
+        BufferedReader r = new BufferedReader(new InputStreamReader(in));
+        StringBuilder total = new StringBuilder();
+        String line;
+        while ((line = r.readLine()) != null) {
+            total.append(line).append('\n');
+        }
+        return total.toString();
+    }
+
 }

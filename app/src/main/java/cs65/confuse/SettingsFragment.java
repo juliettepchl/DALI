@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,11 +47,14 @@ public class SettingsFragment extends Fragment {
     private Switch difficulty;
     public String mode = "easy";
     private SaveData sd;
+    private ImageView profile_imageview;
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.settingsfragment, container, false);
 
     }
@@ -61,14 +65,27 @@ public class SettingsFragment extends Fragment {
         sd = new SaveData(getActivity());
         sd.initialize();
         account = sd.load();
+        try {
+            getAccount(getActivity(), account.name, account.password);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         sd.saveDiff(mode);
         ((EditText)view.findViewById(R.id.name)).setText(account.name);
-        ((ImageView)view.findViewById(R.id.profile_pic)).setImageBitmap(account.prof);
+        profile_imageview = view.findViewById(R.id.profile_pic);
+        //profile_imageview.setImageBitmap(account.prof);
         signout = view.findViewById(R.id.sign_out);
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             //reset data on sign_out click to default.
             public void onClick(View view) {
+                account.fullName = "";
+                account.name  = "";
+                account.avail = null;
+                account.password = "";
+                account.score = 0;
+                account.prof = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                sd.save(account);
                 Intent intent = new Intent(getActivity(),SignIn.class);
                 getActivity().startActivity(intent);
             }
@@ -79,7 +96,6 @@ public class SettingsFragment extends Fragment {
             //reset data on sign_out click to default.
             public void onClick(View view) {
                 try {
-
                     doReset(getActivity(), account.name, account.password);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -153,6 +169,48 @@ public class SettingsFragment extends Fragment {
         };
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
+    }
+    public void getAccount(final Activity activity, String name, String password) throws MalformedURLException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
+        URL url = new URL("http://cs65.cs.dartmouth.edu/profile.pl?name="+name+"&password="+password);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // parse the string, based on provided class object as template
+                            Gson gson = new GsonBuilder().create();
+                            account = gson.fromJson(response, Account.class);
+                            byte[] decodedBytes = Base64.decode(account.profile_pic, 0);
+                            account.prof = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                            profile_imageview.setImageBitmap(account.prof);
+
+
+                        }
+                        catch( Exception e){
+                            Log.d("JSON", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+            // This to set custom headers:
+            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json"); // or else HTTP code 500
+                return params;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
     }
 
 }

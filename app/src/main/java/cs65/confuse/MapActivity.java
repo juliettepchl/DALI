@@ -1,6 +1,7 @@
 package cs65.confuse;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -629,20 +630,18 @@ public class MapActivity extends AppCompatActivity
 
                             if (petted.status.equals("OK")){
                                 curr_marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                                Toast.makeText(MapActivity.this, "Congratulations!", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(MapActivity.this, "Congratulations!", Toast.LENGTH_SHORT).show();
                                 for (int i = 0; i < catList.length; i ++){
                                     if (petted.catId.equals(catList[i].catId)){
                                         catList[i].petted = true;
                                     }
                                 }
+                                Intent myIntent = new Intent(MapActivity.this, SuccessAct.class);
+                                startActivity(myIntent);
 
                             } else {
-
-                                Toast.makeText(MapActivity.this, petted.reason, Toast.LENGTH_LONG).show();
-
+                                Toast.makeText(MapActivity.this, petted.reason, Toast.LENGTH_SHORT).show();
                             }
-
-
                         }
 
                         catch( Exception e){
@@ -667,7 +666,6 @@ public class MapActivity extends AppCompatActivity
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
-
 }
 
 

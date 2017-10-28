@@ -2,6 +2,7 @@ package cs65.confuse;
 
 /**
  * Created by LukeHudspeth on 10/25/17.
+ * object loaded from JSON
  */
 
 public class Cat {

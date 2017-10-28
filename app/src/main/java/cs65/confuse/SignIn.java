@@ -1,5 +1,6 @@
 package cs65.confuse;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
@@ -10,12 +11,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignIn extends AppCompatActivity {
 
@@ -50,9 +62,8 @@ public class SignIn extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GsonVolley gv = new GsonVolley();
                 try {
-                    gv.AttemptLogin(SignIn.this, ((EditText)findViewById(R.id.characterName)).getText().toString(),
+                    AttemptLogin(SignIn.this, ((EditText)findViewById(R.id.characterName)).getText().toString(),
                             ((EditText)findViewById(R.id.password)).getText().toString());
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -92,6 +103,57 @@ public class SignIn extends AppCompatActivity {
         account.name=((EditText)findViewById(R.id.characterName)).getText().toString();
         account.password=((EditText)findViewById(R.id.password)).getText().toString();
         return account;
+    }
+
+
+    public void AttemptLogin(final Activity activity, String name, String password) throws MalformedURLException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
+        URL url = new URL("http://cs65.cs.dartmouth.edu/profile.pl?name="+name+"&password="+password);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // parse the string, based on provided class object as template
+                            Gson gson = new GsonBuilder().create();
+                            account = gson.fromJson(response, Account.class);
+
+                            if(account.error == null) {
+                                Intent i = new Intent(activity.getApplicationContext(), MainApp.class);
+                                activity.startActivity(i);
+                            }
+                            else{
+                                ((EditText) activity.findViewById(R.id.password)).setText(null);
+                                ((EditText) activity.findViewById(R.id.characterName)).setText(null);
+                                ((EditText)activity.findViewById(R.id.characterName)).setError("This account does not exist");
+                                activity.findViewById(R.id.characterName).requestFocus();
+
+
+                            }
+                        }
+                        catch( Exception e){
+                            Log.d("JSON", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+            // This to set custom headers:
+            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json"); // or else HTTP code 500
+                return params;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
     }
 }
 
