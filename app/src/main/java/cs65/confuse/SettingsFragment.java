@@ -9,11 +9,13 @@ import android.app.Activity;
 import android.app.FragmentManager;
 
 import android.app.FragmentTransaction;
+import android.media.Image;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.Toast;
 import com.android.volley.AuthFailureError;
@@ -46,6 +49,7 @@ public class SettingsFragment extends Fragment implements ListenerInterface {
     public String mode = "easy";
     private SaveData sd;
     private Button changePassword;
+    private ImageView profile_imageview;
 
 
 
@@ -68,6 +72,12 @@ public class SettingsFragment extends Fragment implements ListenerInterface {
         ((EditText)view.findViewById(R.id.password)).setText(account.password);
         changePassword = view.findViewById(R.id.updatePassword);
         signout = view.findViewById(R.id.sign_out);
+        profile_imageview = view.findViewById(R.id.profile_pic);
+        try {
+            getAccount(getActivity(), account.name, account.password);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
         signout.setOnClickListener(new View.OnClickListener() {
             @Override
             //reset data on sign_out click to default.
@@ -116,7 +126,8 @@ public class SettingsFragment extends Fragment implements ListenerInterface {
         changePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ChangePassword();
+                Intent intent = new Intent(getActivity(),ChangePassword.class);
+                getActivity().startActivity(intent);
             }
         });
 
@@ -223,13 +234,7 @@ public class SettingsFragment extends Fragment implements ListenerInterface {
 
     }
 
-    private void ChangePassword() {
-        Fragment changePasswordFragment = ChangePasswordFragment.newInstance("Password Change");
-        android.support.v4.app.FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(changePasswordFragment, "tag").commit();
 
-        //ChangePasswordFragment.newInstance("fragment_change_password").show(getFragmentManager(), "tag");
-    }
 
     @Override
     public void onFinishEditDialog(String inputText) {
@@ -237,4 +242,50 @@ public class SettingsFragment extends Fragment implements ListenerInterface {
             DoGet(account, inputText);
         }
     }
+
+
+
+    public void getAccount(final Activity activity, String name, String password) throws MalformedURLException {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(activity.getApplicationContext());
+        URL url = new URL("http://cs65.cs.dartmouth.edu/profile.pl?name="+name+"&password="+password);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url.toString(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            // parse the string, based on provided class object as template
+                            Gson gson = new GsonBuilder().create();
+                            account = gson.fromJson(response, Account.class);
+                            byte[] decodedBytes = Base64.decode(account.profile_pic, 0);
+                            account.prof = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+                            profile_imageview.setImageBitmap(account.prof);
+
+
+                        }
+                        catch( Exception e){
+                            Log.d("JSON", e.toString());
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }) {
+
+            // This to set custom headers:
+            // https://stackoverflow.com/questions/17049473/how-to-set-custom-header-in-volley-request
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Accept", "application/json"); // or else HTTP code 500
+                return params;
+            }
+        };
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
+    }
+
 }

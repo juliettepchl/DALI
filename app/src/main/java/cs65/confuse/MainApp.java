@@ -33,7 +33,6 @@ public  class MainApp extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_app);
-        Toast.makeText(getApplicationContext(), "Log In Successful", Toast.LENGTH_LONG).show();
         slidingTabLayout = (SlidingTabLayout) findViewById(R.id.tab);
         mViewPager = (ViewPager) findViewById(R.id.viewpager);
 
