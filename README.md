@@ -3,9 +3,7 @@
 ## README for Luke Hudspeth and Juliette Pouchol
 
 ### Project Description
-This application is a user entry log-in page, with the 
-functionality mandated on the CS65 course website. Lab 2 built upon lab1 and 
-implemented the use of server interactions with the creating of accounts. 
+Lab3 implementation 
 
 ### Authors:
 Luke Hudspeth '19 and Juliette Pouchol '20
@@ -21,6 +19,9 @@ See commit history. Equal contribution on both of our parts.
 ### Grading
 Our final code is the master branch of this project. Please grade from the tag
 "FINAL_SUBMISSION"
+
+###APK:
+see app/debug-APK
 
 
 
