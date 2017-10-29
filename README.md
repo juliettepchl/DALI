@@ -19,9 +19,12 @@ See commit history. Equal contribution on both of our parts.
 ### Grading
 Our final code is the master branch of this project. Please grade from the tag
 "FINAL_SUBMISSION"
+Turned in 48 hours late, Juliette and I each used one day extension, and I
+received a "free-pass" due to technical interviews this past week.
 
 ### APK:
 see app/debug-APK
+
 
 ### Noted bugs:
 1. When click on cat market, must click off screen, then click on again, and image will load.
