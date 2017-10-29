@@ -20,8 +20,13 @@ See commit history. Equal contribution on both of our parts.
 Our final code is the master branch of this project. Please grade from the tag
 "FINAL_SUBMISSION"
 
-###APK:
+### APK:
 see app/debug-APK
+
+### Noted bugs:
+1. When click on cat market, must click off screen, then click on again, and image will load.
+2. The banner bar does not update when clicked off of a marker.
+3. The distance does update in real time, but must reclick on marker to see it. 
 
 
 
