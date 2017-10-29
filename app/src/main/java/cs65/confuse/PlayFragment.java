@@ -63,8 +63,7 @@ public class PlayFragment extends Fragment {
 
         }
         ((EditText)view.findViewById(R.id.name)).setText(String.format("Hello, %s!", account.name));
-        ((EditText)view.findViewById(R.id.Score)).setText("Your current score is: " +account.score.toString()
-        );
+       // ((EditText)view.findViewById(R.id.Score)).setText("Your current score is: " +account.score.toString());
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,6 +87,8 @@ public class PlayFragment extends Fragment {
                             // parse the string, based on provided class object as template
                             Gson gson = new GsonBuilder().create();
                             account = gson.fromJson(response, Account.class);
+                            ((EditText)getActivity().findViewById(R.id.name)).setText(String.format("Hello, %s!", account.name));
+                            ((EditText)getActivity().findViewById(R.id.Score)).setText("Your current score is: " +account.score.toString());
                         }
                         catch( Exception e){
                             Log.d("JSON", e.toString());
@@ -112,6 +113,17 @@ public class PlayFragment extends Fragment {
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
+    }
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d("STATE", "onRestoreState");
+        try {
+            getAccount(getActivity(), account.name, account.password);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+
+        }
     }
 
 }

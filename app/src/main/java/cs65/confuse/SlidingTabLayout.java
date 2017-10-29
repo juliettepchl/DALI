@@ -17,7 +17,7 @@ package cs65.confuse;
  */
 
 
-import android.annotation.TargetApi;
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -47,7 +47,7 @@ import android.widget.TextView;
  * The views used as tabs can be customized by calling {@link #setCustomTabView(int, int)},
  * providing the layout ID of your custom layout.
  */
-@TargetApi(Build.VERSION_CODES.CUPCAKE)
+
 public class SlidingTabLayout extends HorizontalScrollView {
 
     /**

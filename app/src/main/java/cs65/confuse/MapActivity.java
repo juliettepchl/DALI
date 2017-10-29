@@ -87,7 +87,7 @@ public class MapActivity extends AppCompatActivity
 
     // A default location (Sydney, Australia) and default zoom to use when location permission is
     // not granted.
-    private final LatLng mDefaultLocation = new LatLng(-33.8523341, 151.2106085);
+    private final LatLng mDefaultLocation = new LatLng(40.344597,-74.715995);
     private static final int DEFAULT_ZOOM = 15;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean mLocationPermissionGranted;
@@ -152,14 +152,15 @@ public class MapActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 try {
-                    if (curr_cat != null && amICloseEnough(curr_cat)){
-                        if (curr_cat.petted == false){
+                    if (curr_cat != null && amICloseEnough(curr_cat)) {
+                        if (curr_cat.petted == false) {
                             doPet(MapActivity.this, account.name, account.password, curr_cat);
-                        } else{
+                        } else {
                             Toast.makeText(MapActivity.this, "Cat already petted!", Toast.LENGTH_LONG).show();
                         }
-                    } if (!amICloseEnough(curr_cat)) {
-                        Toast.makeText(MapActivity.this, "Cat too far!", Toast.LENGTH_LONG).show();
+                        if (!amICloseEnough(curr_cat)) {
+                            Toast.makeText(MapActivity.this, "Cat too far!", Toast.LENGTH_LONG).show();
+                        }
                     }
 
                 } catch (MalformedURLException e) {
@@ -261,17 +262,22 @@ public class MapActivity extends AppCompatActivity
                             Gson gson = new GsonBuilder().create();
                             catList = gson.fromJson(response, Cat[].class);
                             if (catList != null) {
+                                int score = 0;
                                 for (int i = 0; i < catList.length; i++) {
                                     Cat cat = catList[i];
                                     LatLng pos = new LatLng(cat.lat, cat.lng);
                                     Marker marker = mMap.addMarker(new MarkerOptions().position(pos).title(cat.name));
                                     marker.setVisible(true);
                                     marker.setTag(cat.name);
+                                    if (catList[i].petted == true){
+                                        score += 1;
+                                    }
                                     if (cat.petted){
-                                        //marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.green_paw));
                                         marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                                     }
                                 }
+                                account.score += score;
+                                sd.save(account);
                             }
 
                         }
@@ -336,6 +342,7 @@ public class MapActivity extends AppCompatActivity
                             connection.connect();
                             InputStream input = connection.getInputStream();
                             myBitmap = BitmapFactory.decodeStream(input);
+
                             //curr_marker.setIcon(myBitmap);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -344,6 +351,7 @@ public class MapActivity extends AppCompatActivity
                 });
 
                 t.start();
+
                 if (myBitmap != null) {
                     ((ImageView) findViewById(R.id.catpic)).setImageBitmap(myBitmap);
                 }
@@ -420,6 +428,11 @@ public class MapActivity extends AppCompatActivity
                                 float distanceInMeters = catLocation.distanceTo(mLastKnownLocation);
                                 String dist = Float.toString(distanceInMeters);
                                 ((EditText) findViewById(R.id.CatSelect)).setText(String.format("%s is %sm away", curr_cat_name, dist));
+                            }
+
+                            if (curr_marker == null){
+                                ((ImageView) findViewById(R.id.catpic)).setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.clickicon));
+                                ((EditText) findViewById(R.id.CatSelect)).setText(String.format("Click a marker!"));
                             }
 
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
@@ -609,6 +622,15 @@ public class MapActivity extends AppCompatActivity
 
             if (mLocationPermissionGranted) {
                 mMap.setMyLocationEnabled(true);
+                if (curr_cat != null) {
+
+                    Location catLocation = new Location("");
+                    catLocation.setLatitude(curr_cat.lat);
+                    catLocation.setLongitude(curr_cat.lng);
+                    float distanceInMeters = catLocation.distanceTo(mLastKnownLocation);
+                    String dist = Float.toString(distanceInMeters);
+                    ((EditText) findViewById(R.id.CatSelect)).setText(String.format("%s is %sm away", curr_cat_name, dist));
+                }
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
                 mMap.setMyLocationEnabled(false);
@@ -678,7 +700,13 @@ public class MapActivity extends AppCompatActivity
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
+
+
+
+
 }
+
+
 
 
 
