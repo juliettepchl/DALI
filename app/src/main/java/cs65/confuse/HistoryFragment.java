@@ -108,8 +108,7 @@ public class HistoryFragment extends Fragment {
     }
 
 
-    private class CatHolder extends RecyclerView.ViewHolder
-    implements View.OnClickListener{
+    private class CatHolder extends RecyclerView.ViewHolder {
         private TextView mNameTextView;
         private TextView mLatView;
         private TextView mLongView;
@@ -125,16 +124,19 @@ public class HistoryFragment extends Fragment {
             mLongView = itemView.findViewById(R.id.cat_long);
             mImageView = (ImageView)itemView.findViewById(R.id.cat_pic);
             mLoveButton = (ImageButton)itemView.findViewById(R.id.loveButton);
-            mLoveButton.setOnClickListener(this);
 
 
 
         }
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void Bind(final Cat cat){
             mCat = cat;
             mNameTextView.setText(mCat.name);
             mLatView.setText("Lat: " + Float.toString(mCat.lat));
             mLongView.setText("Lng: " +Float.toString(mCat.lng));
+            if(cat.petted){
+                mLoveButton.setImageDrawable(getActivity().getDrawable(R.drawable.filled_heart));
+            }
 
             Thread t = new Thread(new Runnable() {
                 public void run() {
@@ -162,14 +164,7 @@ public class HistoryFragment extends Fragment {
 
         }
 
-        @Override
-        public void onClick(View view) {
-            Toast.makeText(getActivity(), mCat.name +" clicked!", Toast.LENGTH_SHORT).show();
-            mLoveButton = view.findViewById(R.id.loveButton);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mLoveButton.setImageDrawable(getActivity().getDrawable(R.drawable.filled_heart));
-            }
-        }
+
     }
 
     private class CatAdapter extends RecyclerView.Adapter<CatHolder>{
