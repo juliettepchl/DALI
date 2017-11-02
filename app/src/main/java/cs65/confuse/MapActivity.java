@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -320,7 +321,20 @@ public class MapActivity extends AppCompatActivity
             Toast.makeText(getApplicationContext(), "something went wrong", Toast.LENGTH_LONG).show();
         }
 
+findViewById(R.id.trackButton).setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        if(((Button)view).getText().equals("TRACK")) {
+            ((Button) view).setText("STOP");
+            ((Button) view).setBackgroundColor(Color.RED);
+        }
+        else{
+            ((Button) view).setText("TRACK");
+            ((Button) view).setBackgroundColor(Color.BLUE);
+        }
 
+    }
+});
 
 
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
