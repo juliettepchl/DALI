@@ -39,7 +39,6 @@ public  class MainApp extends AppCompatActivity  {
         fragments = new ArrayList<Fragment>();
         fragments.add(new PlayFragment());
         fragments.add(new HistoryFragment());
-        fragments.add(new RankingFragment());
         fragments.add(new SettingsFragment());
 
         mViewPagerAdapter = new TabsViewPagerAdapter(getSupportFragmentManager(),fragments);
