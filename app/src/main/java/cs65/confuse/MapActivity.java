@@ -328,9 +328,9 @@ public class MapActivity extends AppCompatActivity
             public boolean onMarkerClick(Marker marker) {
                 curr_marker = marker;
                 curr_cat_name = (String)(marker.getTag());
-                for (int i=0; i < catList.length; i ++) {
-                    if (catList[i].name.equals(curr_cat_name)) {
-                        curr_cat = catList[i];
+                for (Cat cat : catList) {
+                    if (cat.name.equals(curr_cat_name)) {
+                        curr_cat = cat;
                     }
                 }
                 Thread t = new Thread(new Runnable() {

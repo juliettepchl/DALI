@@ -135,7 +135,7 @@ public class HistoryFragment extends Fragment {
             mNameTextView.setText(mCat.name);
             mLatView.setText("Lat: " + Float.toString(mCat.lat));
             mLongView.setText("Lng: " +Float.toString(mCat.lng));
-            
+
             Thread t = new Thread(new Runnable() {
                 public void run() {
                     try {
