@@ -22,11 +22,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/map"
         android:background="@color/fullNameColor"
         android:clickable="true"
         android:focusable="true"
         android:text="@string/pet"
+        android:textSize="14sp"
         android:visibility="visible" />
 
     <EditText
@@ -35,24 +37,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_toStartOf="@+id/pet_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="65dp"
+        android:layout_marginStart="65dp"
         android:clickable="false"
         android:ems="10"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:inputType="textMultiLine"
-        android:text="@string/hello_please_click_on_a_paw" />
+        android:text="@string/hello_please_click_on_a_paw"
+        android:textSize="14sp" />
 
     <ImageView
         android:id="@+id/catpic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/mr_controller_volume_group_list_item_height"
+        android:layout_height="@dimen/crop__bar_height"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/CatSelect"
-        android:layout_toStartOf="@+id/CatSelect"
         android:scaleType="fitCenter"
         android:visibility="visible"
         app:srcCompat="@drawable/clickicon" />
+
+    <Button
+        android:id="@+id/trackButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/map"
+        android:layout_toEndOf="@+id/CatSelect"
+        android:layout_toLeftOf="@+id/pet_button"
+        android:layout_toRightOf="@+id/CatSelect"
+        android:layout_toStartOf="@+id/pet_button"
+        android:background="@android:color/holo_purple"
+        android:text="TRACK"
+        android:textColor="@color/cast_libraries_material_featurehighlight_text_body_color" />
 
 </RelativeLayout>
