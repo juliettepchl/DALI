@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cat_recycler_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+
+    <TextView
+        android:id="@+id/cat_name"
+        android:layout_width="85dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="204dp"
+        android:fontFamily="casual"
+        android:text="Cat Name"
+        android:textColor="@android:color/holo_purple"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.066"
+        tools:layout_editor_absoluteX="87dp"
+        tools:layout_editor_absoluteY="5dp" />
+
+    <TextView
+        android:id="@+id/cat_long"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="50dp"
+        android:text="Cat Longitude"
+        android:textAppearance="@style/TextAppearance.Design.Hint"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.6"
+        app:srcCompat="@android:drawable/btn_star" />
+
+    <TextView
+        android:id="@+id/cat_lat"
+        android:layout_width="0dp"
+        android:layout_height="23dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="24dp"
+        android:text="Cat Latitude"
+        android:textAppearance="@style/TextAppearance.Design.Hint"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.387"
+        app:srcCompat="@android:drawable/btn_star" />
+
+    <ImageView
+        android:id="@+id/cat_pic"
+        android:layout_width="70dp"
+        android:layout_height="78dp"
+        android:layout_marginRight="308dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/btn_star" />
+
+    <ImageButton
+        android:id="@+id/loveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:background="@color/cast_expanded_controller_ad_container_white_stripe_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/black_heart" />
+
+</android.support.constraint.ConstraintLayout>

@@ -30,6 +30,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -62,10 +64,6 @@ public class SaveData {
         prefsEditor.commit();
         prefsEditor.putString("fullName", account.fullName);
         prefsEditor.commit();
-//        File file = saveImage(account.prof);
-//        prefsEditor.putString("path", file.getAbsolutePath());
-//        prefsEditor.commit();
-
     }
 
     //function called to load data from previously saved shared preferences.
@@ -135,6 +133,8 @@ public class SaveData {
         String diff = appPrefs.getString("diff", "");
         return diff;
     }
+
+
 }
 
 
