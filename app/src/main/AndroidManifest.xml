@@ -31,16 +31,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDR1T3HTxEGO5bN8D1HyDnd3735MuXkEzw" />
 
-        <activity android:name=".SignIn">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/app_name">
+        <activity android:name=".Main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,26 +39,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
-        <activity
-            android:name=".MainApp"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
-        <activity
-            android:name=".MapActivity"
-            android:label="@string/map_activity_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".SuccessAct">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".ChangePassword"></activity>
     </application>
 
 </manifest>

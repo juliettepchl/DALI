@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainApp">
+    tools:context=".Main">
 
     <cs65.confuse.SlidingTabStrip
         android:layout_width="match_parent"
@@ -25,5 +25,7 @@
         android:id="@+id/viewpager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/tab"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tab" />
 </RelativeLayout>

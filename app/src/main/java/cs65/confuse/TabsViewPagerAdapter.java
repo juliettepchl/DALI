@@ -17,14 +17,13 @@ import java.util.ArrayList;
 public class TabsViewPagerAdapter extends FragmentPagerAdapter {
     private ArrayList<Fragment> fragments;
 
-    public static final int PLAY = 0;
-    public static final int HISTORY = 1;
-    public static final int RANKING = 2;
-    public static final int SETTINGS = 3;
-    public static final String UI_TAB_PLAY = "PLAY";
-    public static final String UI_TAB_HISTORY = "HISTORY";
-    public static final String UI_TAB_RANKING = "RANKING";
-    public static final String UI_TAB_SETTINGS = "SETTINGS";
+    public static final int HOME = 0;
+    public static final int PEOPLE = 1;
+    public static final int PROJECTS = 2;
+
+    public static final String UI_TAB_HOME = "HOME";
+    public static final String UI_TAB_PEOPLE = "PEOPLE";
+    public static final String UI_TAB_PROJECTS = "PROJECTS";
 
     public TabsViewPagerAdapter(FragmentManager fm, ArrayList<Fragment> fragments){
         super(fm);
@@ -41,14 +40,12 @@ public class TabsViewPagerAdapter extends FragmentPagerAdapter {
 
     public CharSequence getPageTitle(int position) {
         switch (position) {
-            case PLAY:
-                return UI_TAB_PLAY;
-            case HISTORY:
-                return UI_TAB_HISTORY;
-            case RANKING:
-                return UI_TAB_RANKING;
-            case SETTINGS:
-                return UI_TAB_SETTINGS;
+            case PEOPLE:
+                return UI_TAB_PEOPLE;
+            case PROJECTS:
+                return UI_TAB_PROJECTS;
+            case HOME:
+                return UI_TAB_HOME;
             default:
                 break;
         }
